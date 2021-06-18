@@ -7,13 +7,13 @@ const app = express();
 const bodyParser = require('body-parser');
 
 // parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: false }));
 // parse application/json
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-app.use(require('./routes/user'));
+//require routes
+app.use(require('./routes/index'));
 
-// mongoose.set('useUnifiedTopology', true)
 // db connect
 mongoose.connect( process.env.URL_ENV, { 
 		useNewUrlParser: true,
@@ -26,6 +26,5 @@ mongoose.connect( process.env.URL_ENV, {
 	console.log('Database connected');
 });
 
-
-app.listen(process.env.PORT, () => console.log('listen port',process.env.PORT));
+app.listen(process.env.PORT, () => console.log('listen port',process.env.PORT,process.env.URL_ENV));
 

@@ -2,9 +2,11 @@ const express = require('express');
 const User = require('../models/user');
 const _ = require('underscore');
 const bcrypt = require('bcrypt');
+
+const { verifyToken, verifyRole } = require('../middlewares/autentication');
 const app = express();
 
-app.get('/users', (req, res) => {
+app.get('/users', verifyToken, (req, res) => {
 	let { query:{ from, limit }} = req;
 
 	from = from || 0;
@@ -36,7 +38,7 @@ app.get('/users', (req, res) => {
 		});
 });
 
-app.post('/users', (req, res) => {
+app.post('/users', [verifyToken, verifyRole], (req, res) => {
 	let body = req.body;
 	let { name, email, password, role } = body;
 		const passHash = bcrypt.hashSync(password, 10);
@@ -49,7 +51,7 @@ app.post('/users', (req, res) => {
 			role
 		});
 
-	user.save( (err, resDB) => {
+		user.save( (err, resDB) => {
 		if (err) return res.status(400).json({
 			ok:false,
 			message: err
@@ -66,7 +68,7 @@ app.post('/users', (req, res) => {
 	}*/
 });
 
-app.put('/users/:id', (req, res) => {
+app.put('/users/:id', [verifyToken, verifyRole], (req, res) => {
 	// let id = req.params.id;
 	let { params: { id }, body } = req;
 	body = _.pick(body,	['name','email','img','role','state'] );
@@ -84,7 +86,7 @@ app.put('/users/:id', (req, res) => {
 	});
 });
 
-app.delete('/users/:id', (req, res) => {
+app.delete('/users/:id', [verifyToken, verifyRole], (req, res) => {
 	let { id } = req.params;
 
 	User.findByIdAndRemove(id, (err, resDB) => {
@@ -105,7 +107,7 @@ app.delete('/users/:id', (req, res) => {
 	});
 });
 
-app.delete('/usersId/:id', (req, res) => {
+app.delete('/usersId/:id', [verifyToken, verifyRole],  (req, res) => {
 
 	let { id } = req.params;
 	console.log(id);
