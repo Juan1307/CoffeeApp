@@ -79,6 +79,11 @@ app.put('/users/:id', [verifyToken, verifyRole], (req, res) => {
 			message: err
 		});
 
+		if (!resDB) return res.status(400).json({
+			ok:false,
+			err:{ message: 'Id not found'}
+		});
+
 		res.json({
 			ok: true,
 			resDB
